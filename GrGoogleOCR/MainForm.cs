@@ -25,7 +25,6 @@ public partial class MainForm : Form {
             Settings.Default.OcrSettings = JsonConvert.SerializeObject(_grOcrSettings);
             Settings.Default.Save();
 
-
             if (string.IsNullOrEmpty(_grOcrSettings.FilePath)) return;
 
             string projectId = _grOcrSettings.ServiceProject; // Your project ID

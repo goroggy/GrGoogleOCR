@@ -16,7 +16,7 @@ public partial class MainForm {
             MimeType = "application/pdf"
         };
 
-        return await GOcr(rawDocument, settings);
+        return await GrOcr(rawDocument, settings);
     }
 
     private async Task<JsonDocument?> GrOcr(Image image, GrOcrSettings settings) {
@@ -29,10 +29,10 @@ public partial class MainForm {
             MimeType = "image/jpeg"
         };
 
-        return await GOcr(rawDocument, settings);
+        return await GrOcr(rawDocument, settings);
     }
 
-    private async Task<JsonDocument?> GOcr(RawDocument rawDocument, GrOcrSettings settings) {
+    private async Task<JsonDocument?> GrOcr(RawDocument rawDocument, GrOcrSettings settings) {
 
         try {
 
