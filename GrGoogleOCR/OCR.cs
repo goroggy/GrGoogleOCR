@@ -32,26 +32,26 @@ public partial class MainForm {
         return await GrOcr(rawDocument, settings);
     }
 
-    private async Task<JsonDocument?> GrOcr(RawDocument rawDocument, GrOcrSettings settings) {
+    private async Task<JsonDocument?> GrOcr(RawDocument rawDocument, GrOcrSettings ocrSettings) {
 
         try {
 
             ProcessRequest request = new() {
-                Name = settings.Route,
+                Name = ocrSettings.Route,
                 RawDocument = rawDocument,
                 ImagelessMode = true,
                 ProcessOptions = new() {
                     OcrConfig = new() {
                         EnableImageQualityScores = true,
-                        EnableSymbol = settings.OcrMode == OcrMode.Symbols,
-                        PremiumFeatures = new() { ComputeStyleInfo = settings.IsStyleInfoWanted },
+                        EnableSymbol = ocrSettings.OcrMode == OcrMode.Symbols,
+                        PremiumFeatures = new() { ComputeStyleInfo = ocrSettings.IsStyleInfoWanted },
                         Hints = new()
                     }
                 }
             };
 
             // Add language hint
-            request.ProcessOptions.OcrConfig.Hints.LanguageHints.Add(settings.OcrLanguage);
+            request.ProcessOptions.OcrConfig.Hints.LanguageHints.Add(ocrSettings.OcrLanguage);
 
             // Make the request
             ProcessResponse? response = await _ocrClient.ProcessDocumentAsync(request);
@@ -68,6 +68,7 @@ public partial class MainForm {
             return JsonDocument.Parse(jsonString);
         }
         catch (Exception ex) {
+            TbError.Text = ex.ToString();
             return null;
         }
     }

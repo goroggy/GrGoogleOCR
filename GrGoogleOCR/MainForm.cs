@@ -1,6 +1,7 @@
 using Google.Cloud.DocumentAI.V1;
+using Google.Cloud.Location;
 using GrGoogleOCR.Properties;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace GrGoogleOCR;
 
@@ -12,17 +13,19 @@ public partial class MainForm : Form {
 
     public MainForm() {
         InitializeComponent();
+
+        _grOcrSettings = JsonSerializer.Deserialize<GrOcrSettings>(Settings.Default.OcrSettings) ??
+                         new GrOcrSettings();
+
         PropGridSettings.SelectedObject = _grOcrSettings;
 
-        _grOcrSettings = JsonConvert.DeserializeObject<GrOcrSettings>(Settings.Default.OcrSettings) ??
-                         new GrOcrSettings();
     }
 
     private async void BtnGo_Click(object sender, EventArgs e) {
 
         try {
 
-            Settings.Default.OcrSettings = JsonConvert.SerializeObject(_grOcrSettings);
+            Settings.Default.OcrSettings = JsonSerializer.Serialize(_grOcrSettings);
             Settings.Default.Save();
 
             if (string.IsNullOrEmpty(_grOcrSettings.FilePath)) return;
@@ -30,9 +33,10 @@ public partial class MainForm : Form {
             string projectId = _grOcrSettings.ServiceProject; // Your project ID
             string location = _grOcrSettings.ServiceLocation; // Your location (e.g., "us" or "eu")
             string processorId = _grOcrSettings.ServiceProcessor; // Your processor ID
+            _grOcrSettings.Route = $"projects/{projectId}/locations/{location}/processors/{processorId}";
 
             string endPoint =
-                $"https://{location}-documentai.googleapis.com/v1/projects/{projectId}/locations/{location}/processors/{processorId}:process";
+                $"https://{location}-documentai.googleapis.com/v1/{_grOcrSettings.Route}:process";
 
             _ocrClient = await new DocumentProcessorServiceClientBuilder {
                 Endpoint = endPoint

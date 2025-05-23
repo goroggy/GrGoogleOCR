@@ -40,7 +40,7 @@
             // 
             // BtnGo
             // 
-            BtnGo.Location = new Point(12, 12);
+            BtnGo.Location = new Point(12, 11);
             BtnGo.Name = "BtnGo";
             BtnGo.Size = new Size(218, 36);
             BtnGo.TabIndex = 0;
@@ -93,7 +93,7 @@
             PdfViewer.ScrollDisplacementValue = 0;
             PdfViewer.ShowHorizontalScrollBar = true;
             PdfViewer.ShowVerticalScrollBar = true;
-            PdfViewer.Size = new Size(585, 774);
+            PdfViewer.Size = new Size(841, 774);
             PdfViewer.SpaceBetweenPages = 8;
             PdfViewer.TabIndex = 3;
             textSearchSettings1.CurrentInstanceColor = Color.FromArgb(127, 255, 171, 64);
@@ -109,7 +109,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(843, 798);
+            ClientSize = new Size(1116, 798);
             Controls.Add(PdfViewer);
             Controls.Add(TbError);
             Controls.Add(PropGridSettings);

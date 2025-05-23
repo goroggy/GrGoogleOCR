@@ -25,7 +25,8 @@ public static class SyncfusionPdfServices {
         };
     }
 
-    public static byte[] ToByteArray(this PdfLoadedDocument origDocument, int pageIndex) {
+    public static byte[] PageToByteArray(this PdfLoadedDocument origDocument, int pageIndex) {
+
         using MemoryStream ms = new();
 
         // Create a new PDF document for the single page.

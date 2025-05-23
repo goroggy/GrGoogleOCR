@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Gr;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Parsing;
 using static Gr.SyncfusionPdfServices;
@@ -10,12 +9,12 @@ public partial class MainForm {
     private async Task OcrPdf() {
         try {
 
-            string pdfFileName = _grOcrSettings.FilePath;
+            string pdfFileName = _grOcrSettings.FilePath.Trim();
             if (string.IsNullOrEmpty(pdfFileName) || !File.Exists(pdfFileName)) return;
 
             string fileNameStem = Path.GetFileNameWithoutExtension(pdfFileName);
-            string dir = Path.GetFullPath(pdfFileName);
-            string ocrPdfFileName = fileNameStem + "_ocr.pdf";
+            string dir = Path.GetDirectoryName(pdfFileName) ?? "";
+            string ocrPdfFileName = Path.Combine(dir, fileNameStem + "_ocr.pdf");
 
             using PdfLoadedDocument pdf = new(pdfFileName);
             List<string> pdfPagePaths = [];
@@ -32,7 +31,7 @@ public partial class MainForm {
                     ocrJson = JsonDocument.Parse(await File.ReadAllTextAsync(jsonFileName));
                 }
                 else {
-                    byte[] pageBytes = pdf.ToByteArray(i);
+                    byte[] pageBytes = pdf.PageToByteArray(i);
                     ocrJson = await GrOcr(pageBytes, _grOcrSettings);
                     if (ocrJson is null) continue;
                     await ocrJson.ToJsonString().WriteToDiskAsync(jsonFileName, false);
