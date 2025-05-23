@@ -5,7 +5,10 @@ namespace GrGoogleOCR;
 public partial class MainForm : Form {
 
     private readonly GrOcrSettings _grOcrSettings = new();
-    private DocumentProcessorServiceClient _ocrClient;
+
+    private DocumentProcessorServiceClient _ocrClient = new DocumentProcessorServiceClientBuilder {
+        Endpoint = ""
+    }.Build();
 
     public MainForm() {
         InitializeComponent();
