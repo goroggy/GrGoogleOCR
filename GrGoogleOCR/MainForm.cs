@@ -1,4 +1,6 @@
 using Google.Cloud.DocumentAI.V1;
+using GrGoogleOCR.Properties;
+using Newtonsoft.Json;
 
 namespace GrGoogleOCR;
 
@@ -6,22 +8,25 @@ public partial class MainForm : Form {
 
     private readonly GrOcrSettings _grOcrSettings = new();
 
-    private DocumentProcessorServiceClient _ocrClient = new DocumentProcessorServiceClientBuilder {
-        Endpoint = ""
-    }.Build();
+    private DocumentProcessorServiceClient _ocrClient;
 
     public MainForm() {
         InitializeComponent();
         PropGridSettings.SelectedObject = _grOcrSettings;
+
+        _grOcrSettings = JsonConvert.DeserializeObject<GrOcrSettings>(Settings.Default.OcrSettings) ??
+                         new GrOcrSettings();
     }
 
     private async void BtnGo_Click(object sender, EventArgs e) {
 
         try {
-            if (string.IsNullOrEmpty(_grOcrSettings.FilePath)) {
-                MessageBox.Show("Please select a file to process.");
-                return;
-            }
+
+            Settings.Default.OcrSettings = JsonConvert.SerializeObject(_grOcrSettings);
+            Settings.Default.Save();
+
+
+            if (string.IsNullOrEmpty(_grOcrSettings.FilePath)) return;
 
             string projectId = _grOcrSettings.ServiceProject; // Your project ID
             string location = _grOcrSettings.ServiceLocation; // Your location (e.g., "us" or "eu")
