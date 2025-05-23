@@ -1,5 +1,4 @@
 ﻿
-
 using System.Drawing.Imaging;
 using System.Text.Json;
 using Google.Cloud.DocumentAI.V1;
@@ -9,17 +8,18 @@ namespace GrGoogleOCR;
 
 public partial class MainForm {
 
-    private async Task<JsonDocument?> GrOcr(byte[] pdfBytes, GrOcrSettings settings) {
+    private async Task<JsonDocument?> GrOcr(byte[] pdfBytes) {
 
         RawDocument rawDocument = new() {
             Content = ByteString.CopyFrom(pdfBytes),
             MimeType = "application/pdf"
         };
 
-        return await GrOcr(rawDocument, settings);
+        return await GrOcr(rawDocument);
     }
 
-    private async Task<JsonDocument?> GrOcr(Image image, GrOcrSettings settings) {
+    private async Task<JsonDocument?> GrOcr(Image image) {
+
         MemoryStream imageStream = new();
         image.Save(imageStream, ImageFormat.Jpeg);
         imageStream.Position = 0;
@@ -29,29 +29,29 @@ public partial class MainForm {
             MimeType = "image/jpeg"
         };
 
-        return await GrOcr(rawDocument, settings);
+        return await GrOcr(rawDocument);
     }
 
-    private async Task<JsonDocument?> GrOcr(RawDocument rawDocument, GrOcrSettings ocrSettings) {
+    private async Task<JsonDocument?> GrOcr(RawDocument rawDocument) {
 
         try {
 
             ProcessRequest request = new() {
-                Name = ocrSettings.Route,
+                Name = _grOcrSettings.Route,
                 RawDocument = rawDocument,
                 ImagelessMode = true,
                 ProcessOptions = new() {
                     OcrConfig = new() {
                         EnableImageQualityScores = true,
-                        EnableSymbol = ocrSettings.OcrMode == OcrMode.Symbols,
-                        PremiumFeatures = new() { ComputeStyleInfo = ocrSettings.IsStyleInfoWanted },
+                        EnableSymbol = _grOcrSettings.OcrMode == OcrMode.Symbols,
+                        PremiumFeatures = new() { ComputeStyleInfo = _grOcrSettings.IsStyleInfoWanted },
                         Hints = new()
                     }
                 }
             };
 
             // Add language hint
-            request.ProcessOptions.OcrConfig.Hints.LanguageHints.Add(ocrSettings.OcrLanguage);
+            request.ProcessOptions.OcrConfig.Hints.LanguageHints.Add(_grOcrSettings.OcrLanguage);
 
             // Make the request
             ProcessResponse? response = await _ocrClient.ProcessDocumentAsync(request);

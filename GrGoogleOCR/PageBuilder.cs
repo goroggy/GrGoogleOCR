@@ -9,12 +9,14 @@ public sealed class PdfOcrPageRebuilder {
 
     private GrOcrSettings _settings = new();
     private string _fullText = "";
-    private const float DpiX = 150f; // Initialize with default DPI
-    private const float DpiY = 150f; // Initialize with default DPI
+    private float _dpiX = 150f; // Initialize with default DPI
+    private float _dpiY = 150f; // Initialize with default DPI
 
     public bool RebuildPageFromOcr(JsonDocument pageData, PdfPageBase page, GrOcrSettings settings) {
 
         _settings = settings;
+        _dpiX = settings.DpiX;
+        _dpiY = settings.DpiY;
 
         PdfGraphics graphics = page.Graphics;
 
@@ -113,7 +115,7 @@ public sealed class PdfOcrPageRebuilder {
         );
     }
 
-    private static (float pdfX, float pdfY, float width, float height) CalculateBoxDimensions(
+    private (float pdfX, float pdfY, float width, float height) CalculateBoxDimensions(
         JsonElement vertices, bool isNormalized, PdfPageBase newPage) {
 
         float pdfX = 0, pdfY = 0, width = 0, height = 0;
@@ -131,10 +133,10 @@ public sealed class PdfOcrPageRebuilder {
             height = (y3 - y0) * newPage.Size.Height;
         }
         else {
-            pdfX = x0 * 72f / DpiX;
-            pdfY = y0 * 72f / DpiY;
-            width = (x1 - x0) * 72f / DpiX;
-            height = (y3 - y0) * 72f / DpiY;
+            pdfX = x0 * 72f / _dpiX;
+            pdfY = y0 * 72f / _dpiY;
+            width = (x1 - x0) * 72f / _dpiX;
+            height = (y3 - y0) * 72f / _dpiY;
         }
 
         return (pdfX, pdfY, width, height);
@@ -253,7 +255,6 @@ public sealed class PdfOcrPageRebuilder {
 
         try {
             return new PdfTrueTypeFont(new("Times", fontSize, fontStyle), true);
-            ;
         }
         catch {
             // Fallback to standard font if no TrueType font is found
@@ -281,7 +282,7 @@ public sealed class PdfOcrPageRebuilder {
                 else if (bpoly.TryGetProperty("vertices", out vertices)) {
                     float x0 = vertices[0].GetProperty("x").GetSingle();
                     float x1 = vertices[1].GetProperty("x").GetSingle();
-                    return Math.Abs(x1 - x0) * (72f / DpiX); // Convert from pixels to points
+                    return Math.Abs(x1 - x0) * (72f / _dpiX); // Convert from pixels to points
                 }
             }
 
@@ -307,7 +308,7 @@ public sealed class PdfOcrPageRebuilder {
                 else if (bpoly.TryGetProperty("vertices", out vertices)) {
                     float y0 = vertices[0].GetProperty("y").GetSingle();
                     float y3 = vertices[3].GetProperty("y").GetSingle();
-                    return Math.Abs(y3 - y0) * (72f / DpiY); // Convert from pixels to points
+                    return Math.Abs(y3 - y0) * (72f / _dpiY); // Convert from pixels to points
                 }
             }
 
@@ -329,6 +330,7 @@ public sealed class PdfOcrPageRebuilder {
     }
 
     private static float GetFontSize(JsonElement el, float boxHeightPt) {
+
         // Start with an initial guess—say, 90% of the OCR bounding box height.
         float initialFontSize = boxHeightPt * 0.9f;
 

@@ -6,6 +6,7 @@ using static Gr.SyncfusionPdfServices;
 namespace GrGoogleOCR;
 
 public partial class MainForm {
+
     private async Task OcrPdf() {
         try {
 
@@ -32,7 +33,7 @@ public partial class MainForm {
                 }
                 else {
                     byte[] pageBytes = pdf.PageToByteArray(i);
-                    ocrJson = await GrOcr(pageBytes, _grOcrSettings);
+                    ocrJson = await GrOcr(pageBytes);
                     if (ocrJson is null) continue;
                     await ocrJson.ToJsonString().WriteToDiskAsync(jsonFileName, false);
                 }
@@ -52,7 +53,6 @@ public partial class MainForm {
                 // pdf.Save(outputPdfPath ); destroyed text layer 
 
                 await File.WriteAllTextAsync(Path.ChangeExtension(ocrPdfFileName, ".txt"), txt);
-
             }
         }
         catch (Exception ex) {
