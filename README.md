@@ -4,6 +4,9 @@
 
 GrGoogleOCR is a C# Windows Forms application demonstrating how to use Google Cloud Document AI for Optical Character Recognition (OCR) on PDF and image files. It removes the original text layer, if any. It extracts text and layout information from teh OCR results and rebuilds the PDF with an embedded, searchable text layer using two different PDF libraries provided in separate branches.
 
+![image](https://github.com/user-attachments/assets/1ca639b2-e4a8-4a8f-b97a-aada4d0cd8bb)
+
+
 ## Overview
 
 This project tackles the common problem of non-searchable, scanned PDFs. It provides a C# implementation for:
