@@ -49,7 +49,7 @@ This repository uses a dual-branch approach:
 ## Technology Stack
 
 * **Language:** C#
-* **Framework:** .NET (e.g., .NET 6/7/8 - *Please specify*)
+* **Framework:** .NET8)
 * **UI:** Windows Forms (WinForms)
 * **Google Cloud Client:** `Google.Cloud.DocumentAI.V1`
 * **JSON Handling:** `System.Text.Json`
